@@ -42,5 +42,5 @@ linters-settings:
     # Show functions with maintainability index lower than N.
     # A high index indicates better maintainability (it's kind of the opposite of complexity).
     # Default: 20
-    under: 20
+    under: 30
 

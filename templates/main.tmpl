@@ -1,0 +1,14 @@
+{{ define "entry" }}
+{{ if ne .Title "" -}}
+## {{ .Title }}
+
+{{ end -}}
+{{ .Text }}
+*{{ .Date.Format "15:04" }}{{ if ne .Weather nil }} {{ printf "%.0f" .Weather.TemperatureCelsius }}C {{ .Weather.Conditions }}{{ end }}{{ if ne .Location nil -}}, {{ .Location.City }}{{- end }}* {{ $taglen := len .Tags -}}{{ if ne $taglen 0 }}{{ range $index, $tag := .Tags }}#{{$tag}} {{ end }}{{ end }}
+{{ end }}
+
+{{ range $index, $entry := . }}
+{{ if eq $index 0 }}{{ $dt := .Date.Format "2006-01-02 Mon" }}# {{ slice $dt 0 13 }}{{ end -}}
+{{ if gt $index 0 }}-----{{ end }}
+{{ block "entry" $entry }}{{ end -}}
+{{ end }}

@@ -1,7 +1,7 @@
 all: install lint lint-fix
 
 install:
-	CGO_ENABLED=0 go install -tags 'netgo osusergo' -ldflags='-s -w' .
+	CGO_ENABLED=0 go install -tags 'netgo osusergo' -ldflags='-s -w' ./cmd/dayone2md
 
 lint:
 	golangci-lint run

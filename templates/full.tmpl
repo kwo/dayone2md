@@ -1,0 +1,35 @@
+{{ define "entry" }}
+---
+date: "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}"
+{{ if ne .Title "" -}}
+title: "{{ .Title }}"
+{{ end -}}
+uuid: "{{ .UUID }}"
+{{- if ne .Location nil }}
+location: "{{ .Location.City }}"
+coordinates: "{{ printf "%.6f" .Location.Latitude }}, {{ printf "%.6f" .Location.Longitude }}"
+{{- end -}}
+{{- if ne .Weather nil }}
+temperature: "{{ printf "%.0f" .Weather.TemperatureCelsius }}C"
+weather: "{{ .Weather.Conditions }}"
+moon: "{{ .Weather.MoonPhaseCode }}"
+{{- end -}}
+{{- $taglen := len .Tags }}{{ if ne $taglen 0 }}
+tags:
+{{- range $index, $tag := .Tags }}
+  - {{$tag}}
+{{- end }}
+{{- end }}
+---
+
+{{ if ne .Title "" -}}
+## {{ .Title }}
+
+{{ end -}}
+{{ .Text }}
+{{ end }}
+
+{{ range $index, $entry := . }}
+{{ if gt $index 0 }}-----{{ end }}
+{{ block "entry" $entry }}{{ end -}}
+{{ end }}
