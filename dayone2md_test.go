@@ -90,6 +90,24 @@ func TestWikilinks(t *testing.T) {
 			Filenames:    map[string]string{"8DB538436C2844E89E2D63A71E1EE884": "xyz"},
 			ExpectedText: "test [[xyz|weekend]] [[xyz|weekend]] test",
 		},
+		{
+			Alias:        "i18n",
+			Text:         "test [Bücher](dayone://view?entryId=8DB538436C2844E89E2D63A71E1EE884) test",
+			Filenames:    map[string]string{"8DB538436C2844E89E2D63A71E1EE884": "xyz"},
+			ExpectedText: "test [[xyz|Bücher]] test",
+		},
+		{
+			Alias:        "punctuation",
+			Text:         "test [Bücher and 44 other-stuff!](dayone://view?entryId=8DB538436C2844E89E2D63A71E1EE884) test",
+			Filenames:    map[string]string{"8DB538436C2844E89E2D63A71E1EE884": "xyz"},
+			ExpectedText: "test [[xyz|Bücher and 44 other-stuff!]] test",
+		},
+		{
+			Alias:        "brackets-fail",
+			Text:         `test [<open>](dayone://view?entryId=8DB538436C2844E89E2D63A71E1EE884) test`,
+			Filenames:    map[string]string{"8DB538436C2844E89E2D63A71E1EE884": "xyz"},
+			ExpectedText: `test [<open>](dayone://view?entryId=8DB538436C2844E89E2D63A71E1EE884) test`,
+		},
 	}
 	for _, tCase := range testCases {
 		t.Run(tCase.Alias, func(t *testing.T) {

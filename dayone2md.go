@@ -207,8 +207,9 @@ func prepareTitle(title string) string {
 }
 
 func wikilinks(text string, filenamesByUUID map[string]string) string {
-	// replace dayone link references with wikilinks
-	re := regexp.MustCompile(`\[([\w\s]+)\]\(dayone\:\/\/view\?entryId\=([A-Z0-9]+)\)`)
+	// Replace dayone link references with wikilinks.
+	// Inside the brackets matches letters, numbers, spaces, dashes, underscores, and other punctuation.
+	re := regexp.MustCompile(`\[([\pL\pN\p{Zs}\p{Pd}\p{Pc}\p{Po}]+)\]\(dayone\:\/\/view\?entryId\=([A-Z0-9]+)\)`)
 	submatches := re.FindAllStringSubmatch(text, -1)
 	for _, submatch := range submatches {
 		subtext, title, uuid := submatch[0], submatch[1], submatch[2]
