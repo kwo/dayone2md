@@ -1,10 +1,8 @@
 # DayOne To Markdown
 
-Export DayOne databases to Markdown files.
+Export DayOne to Markdown.
 
 ## Usage
-
-Export the archive from DayOne.
 
 ```
 Usage:
@@ -39,8 +37,8 @@ make install
 
 ## Production Ready (the last 80%)
  - [ ] update readme with features list
- - [ ] license
- - [ ] github repo
+ - [x] license
+ - [x] github repo
  - [ ] blog post, Twitter
  - [ ] publish doc to kwo.dev
  - [ ] goreleaser
@@ -67,4 +65,3 @@ make install
 - [x] add location, weather, moonphase, etc to frontmatter
 - [x] inplace update of iA directory
 - [x] options to not add tags to bottom
-
