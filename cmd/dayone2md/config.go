@@ -23,12 +23,12 @@ func getOptions() (*Options, error) {
 // see https://pkg.go.dev/github.com/jessevdk/go-flags?utm_source=godoc#hdr-Available_field_tags
 type Options struct {
 	JournalName     string `short:"j" long:"journal"                 description:"journal name to export"`
-	InputLocation   string `short:"i" long:"input"                   description:"input file, either the DayOne.sqlite database file or the export zip file"`
+	InputLocation   string `short:"i" long:"input"                   description:"input file, either the DayOne.sqlite database file or the JSON export zip file"`
 	OutputDirectory string `short:"o" long:"output"                  description:"output directory"`
-	Template        string `short:"t" long:"template" default:"main" description:"name of the template to use, either the path the external template file or the name of a built-in template: main or full"`
+	Template        string `short:"t" long:"template" default:"main" description:"name of the template to use, either the path of an external template file or the name of a built-in template: main or full"`
 	GroupByDay      bool   `short:"g" long:"group"                   description:"group entries by day, one file per day, multiple entries per file"`
-	SortReverse     bool   `short:"r" long:"reverse"                 description:"reverse chronological sort order for entries within a file"`
-	KeepOrphans     bool   `          long:"keep-orphans"            description:"do not remove files at destination that lack a matching entry at the source"`
+	SortReverse     bool   `short:"r" long:"reverse"                 description:"reverse chronological sort order for entries within a file, useful only if entries are grouped by day"`
+	KeepOrphans     bool   `          long:"keep-orphans"            description:"do not remove files in the output directory that lack a matching entry in the input file"`
 	PrintVersion    bool   `          long:"version"                 description:"print version and exit"`
 	Verbose         []bool `short:"v" long:"verbose"                 description:"show verbose output, list multiple times for even more verbose output"`
 }
