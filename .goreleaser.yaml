@@ -22,7 +22,7 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
 
 archives:
-  - format: tgz
+  - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of uname.
     name_template: >-
       {{ .ProjectName }}_
@@ -58,6 +58,6 @@ release:
 brews:
 - name: dayone2md
   homepage: https://github.com/kwo/homebrew-tools
-  tap:
+  repository:
     owner: kwo
     name: homebrew-tools
