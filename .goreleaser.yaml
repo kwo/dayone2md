@@ -15,6 +15,7 @@ builds:
       - -s -w
     goos:
       - darwin
+      - linux
     goarch:
       - arm64
       - amd64
@@ -52,5 +53,11 @@ release:
   github:
     owner: kwo
     name: dayone2md
-
   mode: replace
+
+brews:
+- name: dayone2md
+  homepage: https://github.com/kwo/homebrew-tools
+  tap:
+    owner: kwo
+    name: homebrew-tools
