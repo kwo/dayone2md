@@ -3,6 +3,8 @@ before:
   hooks:
     - go mod tidy
     - go generate ./...
+    - golangci-lint run
+    - govulncheck -test .
 
 builds:
   - main: ./cmd/dayone2md
@@ -12,7 +14,7 @@ builds:
       - osusergo
       - netgo
     ldflags:
-      - -s -w
+      - -s -w -X main.version={{.Summary}} -X main.commithash={{.ShortCommit}} -X main.commitdate={{.CommitDate}}
     goos:
       - darwin
       - linux

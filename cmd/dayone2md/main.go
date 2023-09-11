@@ -6,12 +6,20 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
 	"github.com/lmittmann/tint"
 
 	"kwo.dev/dayone2md"
+)
+
+//nolint:gochecknoglobals
+var (
+	commithash = "unknown"
+	commitdate = "unknown"
+	version    = "unknown"
 )
 
 func main() {
@@ -47,7 +55,11 @@ func main() {
 
 	// print version and exit
 	if opts.PrintVersion {
-		fmt.Println(version(verbosity.Level() < slog.LevelWarn))
+		if verbosity.Level() < slog.LevelWarn {
+			fmt.Printf("%s %s %s %s %s/%s\n", version, commithash, commitdate, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+		} else {
+			fmt.Printf("%s\n", version)
+		}
 		return
 	}
 

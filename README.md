@@ -1,4 +1,4 @@
-# DayOne To Markdown
+# Dayone To Markdown
 
 Export Dayone to Markdown.
 
@@ -64,32 +64,51 @@ Help Options:
 
 ```sh
 dayone2md -i "$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents/DayOne.sqlite" -o $HOME/Documents/Journal -j Journal -g -vv
+
+OR
+
 dayone2md -i "$HOME/Desktop/09-07-2023_8-30-PM.zip" -o $HOME/Documents/Journal -j Journal -g -vv
 ```
 
 ## Input Sources
 
-TODO
+### JSON Export archive
 
-Explain that Dayone must be started to sync (Premium users) first.
+Follow these [instructions](https://dayoneapp.com/guides/tips-and-tutorials/exporting-entries/#mac) to export entries from the Dayone app to a JSON archive.
 
-Location of database on Mac
+Then, use the archive location as the import source, for example:
+
+`dayone2md -i "$HOME/Desktop/09-07-2023_8-30-PM.zip" ...`
+
+### Database
+
+The Dayone database on a Mac is located at
+
+`$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents/DayOne.sqlite`
+
+To export entries directly from the database, use this location as the import source, like this:
+
+`dayone2md -i "$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents/DayOne.sqlite" ...`
+
+The database is opened in readonly mode and an export can be performed while the Dayone app is open. Also, note that for premium users that are synchronizing data from multiple devices, the Dayone app must be run once before exporting to retrieve entries from the Dayone cloud service.
+
+Disclaimer: be careful by keeping a backup of your data. As stated in the license, this software assumes no liability for data loss.
 
 
+## 🧑‍💻 development
 
-## development
+once:
+```sh
+brew install goreleaser golangci-lint
+go install -v golang.org/x/vuln/cmd/govulncheck@latest
+```
 
+ongoing:
 ```shell
-make lint-fix
-make lint
-make install
+goreleaser release --clean --snapshot
+./dist/dayone2md_darwin_arm64/dayone2md --version -vv
 ```
 
 ## similar projects
 * [joshuacoles/Dayone-Export](https://github.com/joshuacoles/Dayone-Export)
 * [quantumgardener/dayone-to-obsidian](https://github.com/quantumgardener/dayone-to-obsidian)
-
-## TODO
-- [ ] abstract destination behind an interface, add memory impl for testing
-- [ ] fill out database entity fields
-
