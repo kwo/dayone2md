@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 //nolint:gochecknoglobals
 var (
 	commithash = "unknown"
-	commitdate = "unknown"
+	commitTS   = "unknown"
 	version    = "unknown"
 )
 
@@ -56,9 +57,11 @@ func main() {
 	// print version and exit
 	if opts.PrintVersion {
 		if verbosity.Level() < slog.LevelWarn {
-			fmt.Printf("%s %s %s %s %s/%s\n", version, commithash, commitdate, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+			ts, _ := strconv.ParseInt(commitTS, 10, 64)
+			dt := time.Unix(ts, 0).UTC().Format(time.DateOnly)
+			fmt.Printf("dayone2md %s %s %s %s\n", version, commithash, dt, runtime.Version())
 		} else {
-			fmt.Printf("%s\n", version)
+			fmt.Printf("dayone2md %s\n", version)
 		}
 		return
 	}
