@@ -21,7 +21,7 @@ e.ZWEATHER, w.ZCONDITIONSDESCRIPTION, w.ZMOONPHASE, w.ZMOONPHASECODE, w.ZPRESSUR
 FROM ZENTRY e
 JOIN ZJOURNAL j ON (e.ZJOURNAL = j.Z_PK)
 LEFT JOIN Z_12TAGS et ON (et.Z_12ENTRIES = e.Z_PK)
-LEFT JOIN ZTAG t ON (t.Z_PK = et.Z_55TAGS1)
+LEFT JOIN ZTAG t ON (t.Z_PK = et.Z_54TAGS1)
 LEFT JOIN ZLOCATION l ON (l.Z_PK = e.ZLOCATION)
 LEFT JOIN ZWEATHER w ON (w.Z_PK = e.ZWEATHER)
 WHERE j.ZNAME = ?
@@ -29,9 +29,9 @@ GROUP BY e.ZUUID
 `
 
 type GetEntriesRow struct {
-	Zuuid                  string
-	Zcreationdate          string
-	Zmodifieddate          string
+	Zuuid                  sql.NullString
+	Zcreationdate          sql.NullString
+	Zmodifieddate          sql.NullString
 	Ztimezone              []byte
 	Zduration              sql.NullInt64
 	Zispinned              sql.NullInt64
@@ -70,7 +70,7 @@ type GetEntriesRow struct {
 	Zwindspeedkph          sql.NullFloat64
 }
 
-func (q *Queries) GetEntries(ctx context.Context, zname string) ([]GetEntriesRow, error) {
+func (q *Queries) GetEntries(ctx context.Context, zname sql.NullString) ([]GetEntriesRow, error) {
 	rows, err := q.db.QueryContext(ctx, getEntries, zname)
 	if err != nil {
 		return nil, err
@@ -140,11 +140,11 @@ JOIN ZENTRY e ON (e.Z_PK = a.ZENTRY)
 `
 
 type GetPhotosRow struct {
-	Zuuid       string
-	Ztype       string
+	Zuuid       sql.NullString
+	Ztype       sql.NullString
 	Zfilename   sql.NullString
-	Zidentifier string
-	Zmd5        string
+	Zidentifier sql.NullString
+	Zmd5        sql.NullString
 }
 
 func (q *Queries) GetPhotos(ctx context.Context) ([]GetPhotosRow, error) {

@@ -71,7 +71,7 @@ func (z *dbSource) GetPhoto(filename string) ([]byte, error) {
 func loadEntries(q *database.Queries, journalName string) (map[string]*Entry, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	rs, err := q.GetEntries(ctx, journalName)
+	rs, err := q.GetEntries(ctx, toNullString(journalName))
 	if err != nil {
 		return nil, fmt.Errorf("cannot query entries: %w", err)
 	}
@@ -95,7 +95,7 @@ func loadPhotos(q *database.Queries, entries map[string]*Entry) error {
 
 	for _, row := range rs {
 		p := toPhoto(row)
-		if e, ok := entries[row.Zuuid]; ok {
+		if e, ok := entries[row.Zuuid.String]; ok {
 			e.Photos = append(e.Photos, *p)
 		}
 	}
@@ -105,7 +105,7 @@ func loadPhotos(q *database.Queries, entries map[string]*Entry) error {
 
 func toEntry(row database.GetEntriesRow) *Entry {
 	e := &Entry{
-		UUID:                row.Zuuid,
+		UUID:                row.Zuuid.String,
 		CreationDate:        parseDate(row.Zcreationdate),
 		ModifiedDate:        parseDate(row.Zmodifieddate),
 		TimeZone:            extractTimezoneName(row.Ztimezone),
@@ -143,8 +143,8 @@ func toEntry(row database.GetEntriesRow) *Entry {
 			MoonPhaseCode:      row.Zmoonphasecode.String,
 			PressureMB:         row.Zpressuremb.Float64,
 			RelativeHumidity:   int(row.Zrelativehumidity.Float64),
-			SunriseDate:        parseDate(row.Zsunrisedate.String),
-			SunsetDate:         parseDate(row.Zsunsetdate.String),
+			SunriseDate:        parseDate(row.Zsunrisedate),
+			SunsetDate:         parseDate(row.Zsunsetdate),
 			TemperatureCelsius: row.Ztemperaturecelsius.Float64,
 			VisibilityKM:       row.Zvisibilitykm.Float64,
 			WeatherCode:        row.Zweathercode.String,
@@ -158,24 +158,24 @@ func toEntry(row database.GetEntriesRow) *Entry {
 
 func toPhoto(row database.GetPhotosRow) *Photo {
 	return &Photo{
-		Type:       row.Ztype,
-		Identifier: row.Zidentifier,
+		Type:       row.Ztype.String,
+		Identifier: row.Zidentifier.String,
 		Filename:   row.Zfilename.String,
-		MD5:        row.Zmd5,
+		MD5:        row.Zmd5.String,
 	}
 }
 
-func parseDate(value string) time.Time {
-	if value == "" {
+func parseDate(value sql.NullString) time.Time {
+	if !value.Valid || value.String == "" {
 		return time.Time{}
 	}
 	// seconds since unix epoch
 	// decimal is fractionsal seconds which can be dropped
-	cd1, err := strconv.ParseFloat(value, 64)
+	cd1, err := strconv.ParseFloat(value.String, 64)
 	if err == nil {
 		return time.Unix(int64(cd1), 0).Add(macosEpoch).UTC()
 	}
-	cd2, err := time.Parse(time.RFC3339, value)
+	cd2, err := time.Parse(time.RFC3339, value.String)
 	if err == nil {
 		return cd2.Add(macosEpoch).UTC()
 	}
@@ -210,4 +210,9 @@ func filterEmpty(values []string) []string {
 		}
 	}
 	return z
+}
+
+func toNullString(value string) sql.NullString {
+	valid := len(strings.TrimSpace(value)) != 0
+	return sql.NullString{String: value, Valid: valid}
 }

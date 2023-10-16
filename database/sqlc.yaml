@@ -8,5 +8,7 @@ sql:
         package: "database"
         out: "."
         overrides:
-        - db_type: "text"
+        - db_type: "TEXT"
+          go_type: "database/sql.NullString"
+        - db_type: "TIMESTAMP"
           go_type: "database/sql.NullString"

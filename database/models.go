@@ -9,8 +9,8 @@ import (
 )
 
 type Z12TAG struct {
-	Z12entries int64
-	Z55tags1   int64
+	Z12entries sql.NullInt64
+	Z54tags1   sql.NullInt64
 }
 
 type ZATTACHMENT struct {
@@ -23,7 +23,7 @@ type ZATTACHMENT struct {
 	Zheight                             sql.NullInt64
 	Zorderinentry                       sql.NullInt64
 	Zwidth                              sql.NullInt64
-	Zentry                              int64
+	Zentry                              sql.NullInt64
 	Zlocation                           sql.NullInt64
 	Zthumbnail                          sql.NullInt64
 	Zisrecording                        sql.NullInt64
@@ -44,10 +44,10 @@ type ZATTACHMENT struct {
 	Zcreationdevice                     sql.NullString
 	Zcreationdeviceidentifier           sql.NullString
 	ZdoEntityname                       sql.NullString
-	Zidentifier                         string
-	Zmd5                                string
+	Zidentifier                         sql.NullString
+	Zmd5                                sql.NullString
 	Zrecordingdevice                    sql.NullString
-	Ztype                               string
+	Ztype                               sql.NullString
 	Zaudiochannels                      sql.NullString
 	Zformat                             sql.NullString
 	Zsamplerate                         sql.NullString
@@ -81,7 +81,7 @@ type ZENTRY struct {
 	Zispinned                      sql.NullInt64
 	Zstarred                       sql.NullInt64
 	Zbook                          sql.NullInt64
-	Zjournal                       int64
+	Zjournal                       sql.NullInt64
 	Zlocation                      sql.NullInt64
 	Zmusic                         sql.NullInt64
 	Zremoteentry                   sql.NullInt64
@@ -90,9 +90,9 @@ type ZENTRY struct {
 	Zuseractivity                  sql.NullInt64
 	Zvisit                         sql.NullInt64
 	Zweather                       sql.NullInt64
-	Zcreationdate                  string
+	Zcreationdate                  sql.NullString
 	Zeditingtime                   sql.NullFloat64
-	Zmodifieddate                  string
+	Zmodifieddate                  sql.NullString
 	Znormalizedgmtdate             sql.NullTime
 	Zchangeid                      sql.NullString
 	Zcreationdevice                sql.NullString
@@ -110,7 +110,7 @@ type ZENTRY struct {
 	Zrichtextjson                  sql.NullString
 	Zsourcestring                  sql.NullString
 	Zunreadmarkerid                sql.NullString
-	Zuuid                          string
+	Zuuid                          sql.NullString
 	Zcreator                       []byte
 	Zpublishurl                    []byte
 	Ztimezone                      []byte
@@ -140,7 +140,7 @@ type ZJOURNAL struct {
 	Zrestrictedjournalexpirationdate     sql.NullTime
 	Zactivekeyfingerprint                sql.NullString
 	Zjournaldescription                  sql.NullString
-	Zname                                string
+	Zname                                sql.NullString
 	Zownerid                             sql.NullString
 	Zsharepermissions                    sql.NullString
 	Zsortmode                            sql.NullString
@@ -186,8 +186,8 @@ type ZTAG struct {
 	ZPk             int64
 	ZEnt            sql.NullInt64
 	ZOpt            sql.NullInt64
-	Zname           string
-	Znormalizedname string
+	Zname           sql.NullString
+	Znormalizedname sql.NullString
 }
 
 type ZWEATHER struct {
