@@ -10,7 +10,7 @@ import (
 
 type Z12TAG struct {
 	Z12entries sql.NullInt64
-	Z54tags1   sql.NullInt64
+	Z53tags1   sql.NullInt64
 }
 
 type ZATTACHMENT struct {
