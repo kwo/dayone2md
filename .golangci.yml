@@ -37,7 +37,7 @@ linters-settings:
     sections:
       - standard
       - default
-      - prefix(kwo.dev/dayone2md)
+      - prefix(github.com/kwo/dayone2md)
   maintidx:
     # Show functions with maintainability index lower than N.
     # A high index indicates better maintainability (it's kind of the opposite of complexity).

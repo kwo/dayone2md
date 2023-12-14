@@ -13,7 +13,7 @@ import (
 
 	"github.com/lmittmann/tint"
 
-	"kwo.dev/dayone2md"
+	"github.com/kwo/dayone2md"
 )
 
 //nolint:gochecknoglobals

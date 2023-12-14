@@ -13,7 +13,7 @@ import (
 
 	_ "modernc.org/sqlite" // import sqlite database library
 
-	"kwo.dev/dayone2md/database"
+	"github.com/kwo/dayone2md/database"
 )
 
 const (

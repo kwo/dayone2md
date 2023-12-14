@@ -1,4 +1,4 @@
-module kwo.dev/dayone2md
+module github.com/kwo/dayone2md
 
 go 1.21
 
