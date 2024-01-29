@@ -149,13 +149,13 @@ func sortEntries(j *Journal, groupByDay, sortWithinDaysReverse bool) (map[string
 		filenames[e.UUID] = filename
 	}
 
-	// sort day entries
+	// sort entries within days
 	for _, dayEntries := range entries {
 		slices.SortFunc(dayEntries, func(a, b *Entry) int {
 			if sortWithinDaysReverse {
-				return b.CreationDate.Compare(a.CreationDate)
+				return sortEntriesWithinDays(b, a)
 			}
-			return a.CreationDate.Compare(b.CreationDate)
+			return sortEntriesWithinDays(a, b)
 		})
 	}
 
@@ -167,6 +167,18 @@ func sortEntries(j *Journal, groupByDay, sortWithinDaysReverse bool) (map[string
 	slices.Sort(names)
 
 	return entries, filenames, names
+}
+
+func sortEntriesWithinDays(a, b *Entry) int {
+	x := a.CreationDate.Compare(b.CreationDate)
+	if x != 0 {
+		return x
+	}
+	x = strings.Compare(a.Title, b.Title)
+	if x != 0 {
+		return x
+	}
+	return strings.Compare(a.Text, b.Text)
 }
 
 func calcFilename(dt time.Time, groupByDay bool) string {
