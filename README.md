@@ -100,6 +100,8 @@ Disclaimer: be careful by keeping a backup of your data. As stated in the licens
 
 ## 🧑‍💻 development
 
+## go-releaser
+
 once:
 ```sh
 brew install goreleaser golangci-lint

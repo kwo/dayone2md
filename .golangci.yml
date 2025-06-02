@@ -1,46 +1,58 @@
-# see https://golangci-lint.run/usage/linters/
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
     - dogsled
     - durationcheck
     - errcheck
     - errchkjson
-    - errorlint
     - errname
+    - errorlint
     - exhaustive
-    - exportloopref
-    - gci
     - gochecknoglobals
     - gochecknoinits
-    - gofumpt
     - gosec
-    - gosimple
     - govet
     - importas
     - ineffassign
-    - makezero
     - maintidx
+    - makezero
     - misspell
     - nilerr
     - noctx
     - nolintlint
     - revive
     - staticcheck
-    - stylecheck
-    - typecheck
     - unconvert
     - unused
-linters-settings:
-  gci:
-    sections:
-      - standard
-      - default
-      - prefix(github.com/kwo/dayone2md)
-  maintidx:
-    # Show functions with maintainability index lower than N.
-    # A high index indicates better maintainability (it's kind of the opposite of complexity).
-    # Default: 20
-    under: 30
-
+  settings:
+    maintidx:
+      under: 30
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofumpt
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/kwo/dayone2md)
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
