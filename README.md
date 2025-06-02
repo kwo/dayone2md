@@ -97,7 +97,6 @@ The database is opened in readonly mode and an export can be performed while the
 
 Disclaimer: be careful by keeping a backup of your data. As stated in the license, this software assumes no liability for data loss.
 
-
 ## 🧑‍💻 development
 
 ## go-releaser

@@ -71,7 +71,7 @@ func (z *dbSource) GetPhoto(filename string) ([]byte, error) {
 func loadEntries(q *database.Queries, journalName string) (map[string]*Entry, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	rs, err := q.GetEntries(ctx, toNullString(journalName))
+	rs, err := q.GetEntries(ctx, journalName)
 	if err != nil {
 		return nil, fmt.Errorf("cannot query entries: %w", err)
 	}
@@ -210,9 +210,4 @@ func filterEmpty(values []string) []string {
 		}
 	}
 	return z
-}
-
-func toNullString(value string) sql.NullString {
-	valid := len(strings.TrimSpace(value)) != 0
-	return sql.NullString{String: value, Valid: valid}
 }
