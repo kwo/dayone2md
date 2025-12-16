@@ -29,7 +29,7 @@ type Options interface {
 func Convert(ctx context.Context, opts Options) error {
 	src := newSource(opts.GetInputLocation())
 
-	j, err := src.GetJournal(opts.GetJournalName())
+	j, err := src.GetJournal(ctx, opts.GetJournalName())
 	if err != nil {
 		return fmt.Errorf("cannot load journal: %w", err)
 	}

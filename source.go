@@ -2,6 +2,7 @@ package dayone2md
 
 import (
 	"archive/zip"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,7 +17,7 @@ type source interface {
 }
 
 type journalGetter interface {
-	GetJournal(string) (*Journal, error)
+	GetJournal(context.Context, string) (*Journal, error)
 }
 
 type photoGetter interface {
@@ -43,7 +44,7 @@ type dirSource struct {
 	dir string
 }
 
-func (z *dirSource) GetJournal(name string) (*Journal, error) {
+func (z *dirSource) GetJournal(_ context.Context, name string) (*Journal, error) {
 	journalName := fmt.Sprintf("%s.json", name)
 	data, err := z.getFile(journalName)
 	if err != nil {
@@ -76,7 +77,7 @@ type zipSource struct {
 	file string
 }
 
-func (z *zipSource) GetJournal(name string) (*Journal, error) {
+func (z *zipSource) GetJournal(_ context.Context, name string) (*Journal, error) {
 	journalName := fmt.Sprintf("%s.json", name)
 	data, err := z.getFile(journalName)
 	if err != nil {

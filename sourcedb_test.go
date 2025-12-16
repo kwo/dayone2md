@@ -1,6 +1,7 @@
 package dayone2md
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -12,7 +13,7 @@ func TestGetJournal(t *testing.T) {
 	t.Skip()
 	src := newDBSource("/Users/karl/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents/DayOne.sqlite")
 
-	j, err := src.GetJournal("Journal")
+	j, err := src.GetJournal(context.Background(), "Journal")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -3,21 +3,21 @@ package database
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 )
 
-const getEntries = `-- name: GetEntries :many
+const getEntriesTemplate = `-- name: GetEntries :many
 SELECT e.ZUUID, e.ZCREATIONDATE, e.ZMODIFIEDDATE, e.ZTIMEZONE, e.ZDURATION,
 e.ZISPINNED, e.ZSTARRED, e.ZISALLDAY,
 e.ZMARKDOWNTEXT, e.ZEDITINGTIME,
 e.ZCREATIONDEVICE, e.ZCREATIONDEVICETYPE, e.ZCREATIONDEVICEMODEL, e.ZCREATIONOSNAME, e.ZCREATIONOSVERSION,
-GROUP_CONCAT(t.ZNAME, ',') AS tags,
+%[1]s AS tags,
 e.ZLOCATION, l.ZUSERLABEL, l.ZLATITUDE, l.ZLONGITUDE, l.ZALTITUDE, l.ZPLACENAME, l.ZLOCALITYNAME, l.ZADMINISTRATIVEAREA, l.ZCOUNTRY,
 e.ZWEATHER, w.ZCONDITIONSDESCRIPTION, w.ZMOONPHASE, w.ZMOONPHASECODE, w.ZPRESSUREMB, w.ZRELATIVEHUMIDITY, w.ZSUNRISEDATE, w.ZSUNSETDATE, w.ZTEMPERATURECELSIUS, w.ZVISIBILITYKM, w.ZWEATHERCODE, w.ZWEATHERSERVICENAME, w.ZWINDBEARING, w.ZWINDSPEEDKPH
 FROM ZENTRY e
 JOIN ZJOURNAL j ON (e.ZJOURNAL = j.Z_PK)
-LEFT JOIN Z_13TAGS et ON (et.Z_13ENTRIES = e.Z_PK)
-LEFT JOIN ZTAG t ON (t.Z_PK = et.Z_55TAGS1)
+%[2]s
 LEFT JOIN ZLOCATION l ON (l.Z_PK = e.ZLOCATION)
 LEFT JOIN ZWEATHER w ON (w.Z_PK = e.ZWEATHER)
 WHERE j.ZNAME = ?
@@ -67,7 +67,7 @@ type GetEntriesRow struct {
 }
 
 func (q *Queries) GetEntries(ctx context.Context, zname string) ([]GetEntriesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getEntries, toNullString(zname))
+	rows, err := q.db.QueryContext(ctx, q.entriesQuery, toNullString(zname))
 	if err != nil {
 		return nil, err
 	}
@@ -175,4 +175,15 @@ func (q *Queries) GetPhotos(ctx context.Context) ([]GetPhotosRow, error) {
 func toNullString(value string) sql.NullString {
 	valid := len(strings.TrimSpace(value)) != 0
 	return sql.NullString{String: value, Valid: valid}
+}
+
+func formatEntriesQuery(join entryTagJoin) string {
+	tagsExpr := "NULL"
+	joinClause := ""
+	if join.table != "" && join.entryColumn != "" && join.tagColumn != "" {
+		tagsExpr = "GROUP_CONCAT(t.ZNAME, ',')"
+		joinClause = fmt.Sprintf("LEFT JOIN %s et ON (et.%s = e.Z_PK)\nLEFT JOIN ZTAG t ON (t.Z_PK = et.%s)\n",
+			quoteIdent(join.table), quoteIdent(join.entryColumn), quoteIdent(join.tagColumn))
+	}
+	return fmt.Sprintf(getEntriesTemplate, tagsExpr, joinClause)
 }

@@ -93,6 +93,8 @@ To export entries directly from the database, use this location as the import so
 
 `dayone2md -i "$HOME/Library/Group Containers/5U8NS4GX82.dayoneapp2/Data/Documents/DayOne.sqlite" ...`
 
+Day One occasionally renames internal join tables (for example `Z_13TAGS`, `Z_42TAGS`, etc.). `dayone2md` auto-detects the correct table and column names at runtime, so tag exports continue to work regardless of the specific schema version.
+
 The database is opened in readonly mode and an export can be performed while the Dayone app is open. Also, note that for premium users that are synchronizing data from multiple devices, the Dayone app must be run once before exporting to retrieve entries from the Dayone cloud service.
 
 Disclaimer: be careful by keeping a backup of your data. As stated in the license, this software assumes no liability for data loss.

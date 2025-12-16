@@ -33,21 +33,24 @@ type dbSource struct {
 	dbFile    string // full filename
 }
 
-func (z *dbSource) GetJournal(name string) (*Journal, error) {
+func (z *dbSource) GetJournal(ctx context.Context, name string) (*Journal, error) {
 	dsn := fmt.Sprintf("file:%s?mode=ro", z.dbFile)
 	db, err := sql.Open(dbFlavorSqlite, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("cannot open database (%s): %w", z.dbFile, err)
 	}
 
-	queries := database.New(db)
+	queries, err := database.New(ctx, db)
+	if err != nil {
+		return nil, fmt.Errorf("cannot prepare queries: %w", err)
+	}
 
-	entries, err := loadEntries(queries, name)
+	entries, err := loadEntries(ctx, queries, name)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := loadPhotos(queries, entries); err != nil {
+	if err := loadPhotos(ctx, queries, entries); err != nil {
 		return nil, err
 	}
 
@@ -68,9 +71,7 @@ func (z *dbSource) GetPhoto(filename string) ([]byte, error) {
 }
 
 // loadEntries return the entries mapped by UUID
-func loadEntries(q *database.Queries, journalName string) (map[string]*Entry, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func loadEntries(ctx context.Context, q *database.Queries, journalName string) (map[string]*Entry, error) {
 	rs, err := q.GetEntries(ctx, journalName)
 	if err != nil {
 		return nil, fmt.Errorf("cannot query entries: %w", err)
@@ -85,9 +86,7 @@ func loadEntries(q *database.Queries, journalName string) (map[string]*Entry, er
 	return entries, nil
 }
 
-func loadPhotos(q *database.Queries, entries map[string]*Entry) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func loadPhotos(ctx context.Context, q *database.Queries, entries map[string]*Entry) error {
 	rs, err := q.GetPhotos(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot query photos: %w", err)
