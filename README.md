@@ -99,22 +99,6 @@ The database is opened in readonly mode and an export can be performed while the
 
 Disclaimer: be careful by keeping a backup of your data. As stated in the license, this software assumes no liability for data loss.
 
-## 🧑‍💻 development
-
-## go-releaser
-
-once:
-```sh
-brew install goreleaser golangci-lint
-go install -v golang.org/x/vuln/cmd/govulncheck@latest
-```
-
-ongoing:
-```shell
-goreleaser release --clean --snapshot
-./dist/dayone2md_darwin_arm64/dayone2md --version -vv
-```
-
 ## similar projects
 * [joshuacoles/Dayone-Export](https://github.com/joshuacoles/Dayone-Export)
 * [quantumgardener/dayone-to-obsidian](https://github.com/quantumgardener/dayone-to-obsidian)

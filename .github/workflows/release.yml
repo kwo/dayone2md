@@ -1,0 +1,123 @@
+name: release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    name: build-${{ matrix.goos }}-${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: darwin
+            goarch: amd64
+            archive_ext: tar.gz
+          - goos: darwin
+            goarch: arm64
+            archive_ext: tar.gz
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build archive
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+          VERSION: ${{ github.ref_name }}
+          COMMIT_HASH: ${{ github.sha }}
+          ARCHIVE_EXT: ${{ matrix.archive_ext }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist
+
+          binary_name=dayone2md
+          asset_basename="dayone2md_${VERSION}_${GOOS}_${GOARCH}"
+          binary_path="dist/${binary_name}"
+          commit_short="${COMMIT_HASH:0:8}"
+          commit_ts="$(git log -1 --format=%ct "$COMMIT_HASH")"
+
+          go build \
+            -trimpath \
+            -buildvcs=true \
+            -ldflags "-s -w -X main.version=${VERSION} -X main.commithash=${commit_short} -X main.commitTS=${commit_ts}" \
+            -o "$binary_path" \
+            ./cmd/dayone2md
+
+          tar -C dist -czf "dist/${asset_basename}.tar.gz" "${binary_name}"
+
+          rm -f "$binary_path"
+
+      - name: Upload archive artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/dayone2md_${{ github.ref_name }}_${{ matrix.goos }}_${{ matrix.goarch }}.${{ matrix.archive_ext }}
+          if-no-files-found: error
+
+  checksums:
+    name: checksums
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download release archives
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+          pattern: '*'
+          merge-multiple: true
+
+      - name: Generate SHA-256 checksums
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum dayone2md_* > SHA256SUMS
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: checksums
+          path: dist/SHA256SUMS
+          if-no-files-found: error
+
+  release:
+    name: github-release
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - checksums
+
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+          pattern: '*'
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            dist/dayone2md_*.tar.gz
+            dist/SHA256SUMS
